@@ -5,6 +5,7 @@ import Deepak from "./assets/Deepak.png";
 import DeepakAbout from "./assets/DeepakAbout.png";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
+import "./loader.css";
 
 export default function Component() {
   const [theme, setTheme] = useState(() => {
