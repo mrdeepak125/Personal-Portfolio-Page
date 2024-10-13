@@ -5,7 +5,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig({
   server: {
     proxy: {
-      '/api': 'http://localhost:8080',
+      '/api': '',
     }
   },
   plugins: [react(),
@@ -18,21 +18,20 @@ export default defineConfig({
         display : "standalone",
         dir : "auto",
         lang : "en",
+        start_url : "/",
         theme_color : "#8936FF",
         background_color: "#111827",
         icons: [
-            {
-                "purpose": "maskable",
-                "sizes": "512x512",
-                "src": "icon/icon512_maskable.png",
-                "type": "image/png"
-            },
-            {
-                "purpose": "any",
-                "sizes": "512x512",
-                "src": "icon/icon512_rounded.png",
-                "type": "image/png"
-            }
+          {
+            src : "/android-chrome-192x192.png",
+            sizes : "192x192",
+            type : "image/png",
+        },
+        {
+            src : "/android-chrome-512x512.png",
+            sizes : "512x512",
+            type : "image/png",
+        }
     ]
     },
       workbox: {
