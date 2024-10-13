@@ -474,7 +474,7 @@ function Projects() {
 
 function Certificates() {
   const certificates = [
-    { id: 1, title: 'Prayogam-2024', issuer: 'Poornima University', year: '2024', link:"https://res.cloudinary.com/djdi5hkyx/image/upload/v1726307805/Deepak_puri_goswami_page-0001_cjjugd.jpg" },
+    { id: 1, title: 'Prayogam-2024', issuer: 'Poornima University', year: '2024', link:"https://res.cloudinary.com/djdi5hkyx/image/upload/v1726307766/Deepak_puri_goswami_page-0001_ngvw5x.jpg" },
     { id: 2, title: 'Google Workspace for Education - Higher Ed Program', issuer: 'Google Cloud', year: '2024',link:"https://res.cloudinary.com/djdi5hkyx/image/upload/v1726307758/Deepak_Puri_Goswami_page-0001_1_hbpmhf.jpg" },
   ]
 
@@ -518,9 +518,9 @@ function Certificates() {
 
 function Contact() {
   const [formData, setFormData] = useState({
-    name: '',
     email: '',
-    message: ''
+    subject: '',
+    message: '',
   });
 
   const handleChange = (e) => {
@@ -533,7 +533,7 @@ function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch('https://email-server-er04.onrender.com/api/send-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -543,7 +543,7 @@ function Contact() {
 
       if (response.ok) {
         toast.success('Message sent successfully!');
-        setFormData({ name: '', email: '', message: '' });
+        setFormData({ email: '', subject: '', message: '' });
       } else {
         toast.error('Failed to send message. Please try again.');
       }
@@ -566,22 +566,22 @@ function Contact() {
         onSubmit={handleSubmit}
       >
         <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
-          <label htmlFor="name" className="block mb-2 font-medium">Name</label>
+          <label htmlFor="email" className="block mb-2 font-medium">Email</label>
           <input
-            type="text"
-            id="name"
-            value={formData.name}
+            type="email"
+            id="email"
+            value={formData.email}
             onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-500"
             required
           />
         </motion.div>
         <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
-          <label htmlFor="email" className="block mb-2 font-medium">Email</label>
+          <label htmlFor="subject" className="block mb-2 font-medium">Subject</label>
           <input
-            type="email"
-            id="email"
-            value={formData.email}
+            type="text"
+            id="subject"
+            value={formData.subject}
             onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-500"
             required

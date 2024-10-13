@@ -8,30 +8,32 @@ export default defineConfig({
       '/api': 'http://localhost:8080',
     }
   },
-  plugins: [
-    react(),
+  plugins: [react(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'robots.txt', 'apple-touch-icon.png'],
       manifest: {
-        "theme_color": "#8936FF",
-        "background_color": "#111827",
-        "icons": [
+        name : "Portfolio",
+        orientation : "any",
+        display : "standalone",
+        dir : "auto",
+        lang : "en",
+        theme_color : "#8936FF",
+        background_color: "#111827",
+        icons: [
             {
-                "src": "/android-chrome-192x192.png",
-                "sizes": "192x192",
+                "purpose": "maskable",
+                "sizes": "512x512",
+                "src": "icon/icon512_maskable.png",
                 "type": "image/png"
             },
             {
-                "src": "/android-chrome-512x512.png",
-                "sizes": "512x512"
+                "purpose": "any",
+                "sizes": "512x512",
+                "src": "icon/icon512_rounded.png",
+                "type": "image/png"
             }
-        ],
-        "orientation": "any",
-        "display": "standalone",
-        "dir": "auto",
-        "lang": "en",
-        "name": "Portfolio"
+    ]
     },
       workbox: {
         runtimeCaching: [

@@ -3,6 +3,7 @@
     "orientation": "any",
     "display": "standalone",
     "dir": "auto",
+    "start_url": "/",
     "lang": "en",
     "theme_color": "#8936FF",
     "background_color": "#111827",
