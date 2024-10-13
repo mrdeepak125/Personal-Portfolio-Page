@@ -6,6 +6,7 @@ import DeepakAbout from "./assets/DeepakAbout.png";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 import "./loader.css";
+import { Analytics } from "@vercel/analytics/react"
 
 export default function Component() {
   const [theme, setTheme] = useState(() => {
@@ -609,6 +610,7 @@ function Contact() {
         </motion.button>
       </motion.form>
       <ToastContainer />
+      <Analytics />
     </div>
   )
 }
