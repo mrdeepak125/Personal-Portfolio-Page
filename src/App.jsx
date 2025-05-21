@@ -192,7 +192,7 @@ export default function Component() {
 
       <main className="container mx-auto px-6 pt-24 pb-12">
         <AnimatedSection sectionRef={sectionRefs.home}>
-          <Home scrollToProjects={() => scrollToSection('projects')} />
+          <Home scrollToProjects={() => scrollToSection('projects')} scrollToContact={()=> scrollToSection('contact')}/>
         </AnimatedSection>
         <AnimatedSection sectionRef={sectionRefs.about}>
           <About />
@@ -304,7 +304,7 @@ function AnimatedSection({ children, sectionRef }) {
   )
 }
 
-function Home({ scrollToProjects }) {
+function Home({ scrollToProjects , scrollToContact }) {
   const textVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: (i) => ({
@@ -404,7 +404,7 @@ function Home({ scrollToProjects }) {
         </motion.button>
         
         <motion.a
-          href="#contact"
+          onClick={scrollToContact}
           className="relative overflow-hidden group border-2 border-blue-500 dark:border-purple-500 text-blue-500 dark:text-purple-400 font-bold py-3 px-8 rounded-full"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -629,6 +629,7 @@ function Projects() {
       title: 'Music Streaming', 
       description: 'A full-stack music streaming service with React, Next.js and Node.js', 
       link: "https://echoplay.vercel.app/",
+      repo: "https://github.com/mrdeepak125/EchoPlay",
       icon: <Music className="text-purple-500" size={20} />,
       tags: ['Next.js', 'React', 'Node.js']
     },
@@ -785,97 +786,253 @@ function Certificates() {
 
 function Contact() {
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
     subject: '',
     message: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [viewingCertificate, setViewingCertificate] = useState(null);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.id]: e.target.value
+      [e.target.name]: e.target.value
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    
     try {
       const response = await fetch('https://email-server-er04.onrender.com/api/send-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          to: 'deepakpuri9190@gmail.com' // Your email address
+        }),
       });
 
       if (response.ok) {
         toast.success('Message sent successfully!');
-        setFormData({ email: '', subject: '', message: '' });
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: ''
+        });
       } else {
         toast.error('Failed to send message. Please try again.');
       }
     } catch (error) {
       console.error('Error:', error);
       toast.error('An error occurred. Please try again later.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  const openCertificate = (certUrl) => {
+    setViewingCertificate(certUrl);
+  };
+
+  const closeCertificate = () => {
+    setViewingCertificate(null);
+  };
+
   return (
-    <div className="w-full max-w-md mx-auto">
-      <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">
-        Get in Touch
-      </h2>
-      <motion.form
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="space-y-6"
-        onSubmit={handleSubmit}
-      >
-        <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
-          <label htmlFor="email" className="block mb-2 font-medium">Email</label>
-          <input
-            type="email"
-            id="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-500"
-            required
-          />
-        </motion.div>
-        <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
-          <label htmlFor="subject" className="block mb-2 font-medium">Subject</label>
-          <input
-            type="text"
-            id="subject"
-            value={formData.subject}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-500"
-            required
-          />
-        </motion.div>
-        <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
-          <label htmlFor="message" className="block mb-2 font-medium">Message</label>
-          <textarea
-            id="message"
-            rows={4}
-            value={formData.message}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-500"
-            required
-          ></textarea>
-        </motion.div>
-        <motion.button
-          type="submit"
-          className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-3 px-4 rounded-md shadow-md transition-all duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+    <div className="w-full max-w-2xl mx-auto">
+      {/* Certificate Modal */}
+      {viewingCertificate && (
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+          <div className="relative max-w-4xl max-h-[90vh]">
+            <button 
+              onClick={closeCertificate}
+              className="absolute -top-10 right-0 text-white hover:text-gray-300 transition-colors"
+            >
+              <X size={24} />
+            </button>
+            <img 
+              src={viewingCertificate} 
+              alt="Certificate" 
+              className="max-w-full max-h-[80vh] object-contain"
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="text-center mb-12">
+        <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">
+          Let's Connect
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400 max-w-lg mx-auto">
+          Have a project in mind or want to discuss opportunities? Feel free to reach out!
+        </p>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-8">
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8"
+          initial={{ opacity: 0, x: -50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
         >
-          Send Message
-        </motion.button>
-      </motion.form>
-      <ToastContainer />
-      <Analytics />
+          <h3 className="text-xl font-bold mb-6 text-gray-800 dark:text-gray-200">Contact Information</h3>
+          
+          <div className="space-y-4">
+            <div className="flex items-start space-x-4">
+              <div className="p-3 bg-blue-100 dark:bg-purple-900 rounded-lg">
+                <Mail className="text-blue-500 dark:text-purple-400" size={20} />
+              </div>
+              <div>
+                <h4 className="font-medium text-gray-700 dark:text-gray-300">Email</h4>
+                <a 
+                  href="mailto:deepakpuri9190@gmail.com" 
+                  className="text-blue-500 dark:text-purple-400 hover:underline"
+                >
+                  deepakpuri9190@gmail.com
+                </a>
+              </div>
+            </div>
+            
+            <div className="flex items-start space-x-4">
+              <div className="p-3 bg-blue-100 dark:bg-purple-900 rounded-lg">
+                <Linkedin className="text-blue-500 dark:text-purple-400" size={20} />
+              </div>
+              <div>
+                <h4 className="font-medium text-gray-700 dark:text-gray-300">LinkedIn</h4>
+                <a 
+                  href="https://www.linkedin.com/in/deepak-puri-goswami-621054291/" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 dark:text-purple-400 hover:underline"
+                >
+                  linkedin.com/in/deepak-puri-goswami
+                </a>
+              </div>
+            </div>
+            
+            <div className="flex items-start space-x-4">
+              <div className="p-3 bg-blue-100 dark:bg-purple-900 rounded-lg">
+                <Github className="text-blue-500 dark:text-purple-400" size={20} />
+              </div>
+              <div>
+                <h4 className="font-medium text-gray-700 dark:text-gray-300">GitHub</h4>
+                <a 
+                  href="https://github.com/mrdeepak125" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 dark:text-purple-400 hover:underline"
+                >
+                  github.com/mrdeepak125
+                </a>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.form
+          onSubmit={handleSubmit}
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8"
+          initial={{ opacity: 0, x: 50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <h3 className="text-xl font-bold mb-6 text-gray-800 dark:text-gray-200">Send Me a Message</h3>
+          
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
+                required
+                disabled={isSubmitting}
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
+                required
+                disabled={isSubmitting}
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Subject
+              </label>
+              <input
+                type="text"
+                id="subject"
+                name="subject"
+                value={formData.subject}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
+                required
+                disabled={isSubmitting}
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Message
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                rows={4}
+                value={formData.message}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
+                required
+                disabled={isSubmitting}
+              />
+            </div>
+            
+            <motion.button
+              type="submit"
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:from-blue-600 hover:to-purple-600 transition-all duration-300 flex items-center justify-center"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Sending...
+                </>
+              ) : (
+                'Send Message'
+              )}
+            </motion.button>
+          </div>
+        </motion.form>
+      </div>
     </div>
   )
 }
